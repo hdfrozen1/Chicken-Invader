@@ -20,8 +20,8 @@ private:
 	std::vector<float>  _dest_y;
 	std::vector<float>  _distance_x;
 	std::vector<float>  _distance_y;
-	std::vector<Vec2> _enemyPosition;
-	//std::vector<Enemy*> _enemies;
+	//std::vector<Vec2> _enemyPosition;
+	std::vector<Enemy*> _enemies;
 	int soluong;
 	std::string _difficulty;
 	Ship* _ship;
@@ -29,6 +29,9 @@ private:
 	bool ispressed = false;
 	Vec2 delta;
 	std::map<Vec2, Vec2> Ebulletpos;
+	std::vector<Vec2> bulletbegin = { Vec2(0,0), Vec2(15,-4), Vec2(-15,-10) };
+	int defaultbullet = 1;
+	float delta_time = 0;
 public:
 	void callEnemy(float dt);
 	static Scene* create(std::string level, int BossLevel);
@@ -41,6 +44,8 @@ private:
 	void attack(float dt);
 	void updatequantity(void* data);
 	void EnemyAttack(float dt);
+	void addBullet();
+	void callRandomGift(float dt);
 };
 
 #endif // !__GAME_SCENE_H__

@@ -5,7 +5,8 @@
 #include "DesignPattern/Observer.h"
 #include "DefineBitmask.h"
 #include "Enemy_Bullet/EBullet.h"
-
+#include <algorithm>
+#include "Gift/Gift.h"
 
 void GameScene::callEnemy(float dt)
 {
@@ -69,9 +70,11 @@ void GameScene::callEnemy(float dt)
 				enemy1->takePosition(Vec2(x_pos, y_pos));
 				enemy2->takePosition(Vec2(x_pos, y2_pos));
 
-				_enemyPosition.push_back(Vec2(x_pos, y_pos));
-				_enemyPosition.push_back(Vec2(x_pos, y2_pos));
+				/*_enemyPosition.push_back(Vec2(x_pos, y_pos));
+				_enemyPosition.push_back(Vec2(x_pos, y2_pos));*/
 				
+				_enemies.push_back(enemy1);
+				_enemies.push_back(enemy2);
 				
 				this->addChild(enemy1,2);
 				this->addChild(enemy2,2);
@@ -142,10 +145,14 @@ bool GameScene::init(std::string level, int BossLevel)
 	this->addChild(_ship,2);
 	
 	Observer::getInstance()->registerEvent("EnemyDie", CC_CALLBACK_1(GameScene::updatequantity, this));
+	Observer::getInstance()->registerEvent("AddBullet", CC_CALLBACK_0(GameScene::addBullet, this));
+	
+
 
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callEnemy), 1.0f);
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::EnemyAttack), 3.0f);
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::updateEnemy), 20.0f);
+	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callRandomGift), 15.0f);
 	
 	auto listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
@@ -166,8 +173,7 @@ void GameScene::updateEnemy(float dt)
 	}
 	_element += 1;
 	soluong = 0;
-
-	_enemyPosition.clear();
+	_enemies.clear();
 }
 
 bool GameScene::onTouchBegan(Touch* touch, Event* event)
@@ -198,10 +204,12 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 void GameScene::attack(float dt)
 {
-	auto bullet = Bullet::create(_ship->getEntityInfo()->_level);
-	bullet->setPosition(_ship->getPosition() + Vec2(0, _ship->getContentSize().height));
-	bullet->setScale(0.3);
-	this->addChild(bullet, 2);
+	for (int i = 0; i < defaultbullet; i++) {
+		auto bullet = Bullet::create(_ship->getEntityInfo()->_level);
+		bullet->setPosition(_ship->getPosition() + bulletbegin[i]);
+		bullet->setScale(0.3);
+		this->addChild(bullet, 2);
+	}
 }
 
 void GameScene::updatequantity(void* data)
@@ -209,18 +217,17 @@ void GameScene::updatequantity(void* data)
 	int enemy_level = static_cast<Enemy*>(data)->getEntityInfo()->_level;
 	int score = static_cast<Enemy*>(data)->getEntityStat()->_diem;
 	Vec2 pos = static_cast<Enemy*>(data)->getEnemyPostition();
-
-	log("size :%d", int(_enemyPosition.size()));
-
-	auto it = std::remove(_enemyPosition.begin(), _enemyPosition.end(), pos);
-	// Erase the elements from the vector
-	_enemyPosition.erase(it, _enemyPosition.end());
-	log("size:%d", int(_enemyPosition.size()));
-
-	_totalscore += score;
 	if (enemy_quantity[enemy_level - 1] != 1) {
+		auto it = std::find_if(_enemies.begin(), _enemies.end(), [pos](Enemy* enemy) {
+			return enemy->getEnemyPostition() == pos;
+			});
+		Enemy* obj = *it;
+		_enemies.erase(it);
 		soluong -= 1;
 	}
+	// Erase the elements from the vector
+
+	_totalscore += score;
 }
 
 void GameScene::EnemyAttack(float dt)
@@ -228,8 +235,20 @@ void GameScene::EnemyAttack(float dt)
 	if (enemy_quantity[_element] > 1) {
 		int firedquantity = random(1, 3);
 		for (int i = 0; i < firedquantity; i++) {
-			int a = random(0, int(_enemyPosition.size()) -1);
-			Ebulletpos[_enemyPosition[a]] = _enemyPosition[a];
+			int a = random(0, int(_enemies.size()) - 1);
+			Vec2 _realPos = _enemies[a]->getPosition();
+			Vec2 _convetpos = Vec2((round(_realPos.x * 100)) / 100, (round(_realPos.y * 100)) / 100);
+			Vec2 _EPos = _enemies[a]->getEnemyPostition();
+			Vec2 _EconvertPos = Vec2((round(_EPos.x * 100)) / 100, (round(_EPos.y * 100)) / 100);
+
+			log("x1:%f", _convetpos.x);
+			log("y1:%f", _convetpos.y);
+			log("x2:%f", _EconvertPos.x);
+			log("y2:%f", _EconvertPos.y);
+
+			if (_convetpos == _EconvertPos) {
+				Ebulletpos[_EPos] = _EPos;
+			}
 		}
 		for (const auto& pair : Ebulletpos) {
 			EBullet* enemybullet = EBullet::create(_difficulty);
@@ -237,10 +256,34 @@ void GameScene::EnemyAttack(float dt)
 			enemybullet->setScale(0.3);
 			this->addChild(enemybullet);
 		}
-		Ebulletpos.clear();
 	}
-	else {
-		return;
-	}
+	Ebulletpos.clear();
+}
 
+void GameScene::addBullet()
+{
+	if (defaultbullet < 3) {
+		defaultbullet += 1;
+	}
+}
+
+void GameScene::callRandomGift(float dt)
+{
+	int randomtime = random(0, 5);
+	delta_time += randomtime;
+
+	auto delay = cocos2d::DelayTime::create(delta_time);
+
+	// Create a function call action to execute your gift appearance logic
+	auto callFunc = cocos2d::CallFunc::create([this]() {
+		Gift* gift = Gift::create();// Replace spawnGift with your actual method to create and show the gift
+		gift->setScale(0.4);
+		this->addChild(gift,2);
+		});
+
+	// Create a sequence of actions: delay followed by the function call
+	auto sequence = cocos2d::Sequence::create(delay, callFunc, nullptr);
+
+	// Run the sequence on the current node or on the desired target
+	this->runAction(sequence);
 }

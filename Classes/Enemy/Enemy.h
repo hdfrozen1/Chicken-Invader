@@ -22,7 +22,7 @@ protected:
 	void onEnter() override;
 	bool callbackOnContactBegin(PhysicsContact& contact);
 private:
-	Vec2 GamePos;
+	Vec2 GamePos = Vec2(0, 0);
 };
 
 #endif // !__ENEMY_H__
