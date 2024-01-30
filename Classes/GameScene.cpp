@@ -150,7 +150,7 @@ bool GameScene::init(std::string level, int BossLevel)
 
 
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callEnemy), 1.0f);
-	//this->schedule(CC_SCHEDULE_SELECTOR(GameScene::EnemyAttack), 3.0f);
+	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::EnemyAttack), 3.0f);
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::updateEnemy), 20.0f);
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callRandomGift), 15.0f);
 	
