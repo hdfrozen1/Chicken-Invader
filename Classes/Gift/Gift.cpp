@@ -43,12 +43,8 @@ bool Gift::init()
 
 	this->scheduleOnce([this](float dt) {
 		// Update the ContactTestBitmask to include DefineBitmask::FRAME
-		auto body = this->getPhysicsBody();
-		if (body) {
-			body->setContactTestBitmask(DefineBitmask::SHIP | DefineBitmask::FRAME);
-			
-		}
-		}, 4.0f, "updateContactTestBitmask");
+		this->removeFromParentAndCleanup(true);
+		}, 9.0f, "updateContactTestBitmask");
 	return true;
 }
 

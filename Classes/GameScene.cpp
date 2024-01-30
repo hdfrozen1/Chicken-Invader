@@ -106,13 +106,13 @@ bool GameScene::init(std::string level, int BossLevel)
 	if (!Scene::initWithPhysics()) {
 		return false;
 	}
-	this->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+	//this->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 
 	Node* frame = Node::create();
 	auto frameBody = PhysicsBody::createEdgeBox(Director::getInstance()->getVisibleSize());
 	frame->setPhysicsBody(frameBody);
 	frameBody->setCategoryBitmask(DefineBitmask::FRAME);
-	frameBody->setContactTestBitmask(DefineBitmask::BULLET| DefineBitmask::EBULLET);
+	frameBody->setContactTestBitmask(DefineBitmask::BULLET | DefineBitmask::EBULLET);
 	frame->setPosition(Director::getInstance()->getVisibleSize() / 2);
 	this->addChild(frame);
 
@@ -150,7 +150,7 @@ bool GameScene::init(std::string level, int BossLevel)
 
 
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callEnemy), 1.0f);
-	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::EnemyAttack), 3.0f);
+	//this->schedule(CC_SCHEDULE_SELECTOR(GameScene::EnemyAttack), 3.0f);
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::updateEnemy), 20.0f);
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callRandomGift), 15.0f);
 	
@@ -241,11 +241,6 @@ void GameScene::EnemyAttack(float dt)
 			Vec2 _EPos = _enemies[a]->getEnemyPostition();
 			Vec2 _EconvertPos = Vec2((round(_EPos.x * 100)) / 100, (round(_EPos.y * 100)) / 100);
 
-			log("x1:%f", _convetpos.x);
-			log("y1:%f", _convetpos.y);
-			log("x2:%f", _EconvertPos.x);
-			log("y2:%f", _EconvertPos.y);
-
 			if (_convetpos == _EconvertPos) {
 				Ebulletpos[_EPos] = _EPos;
 			}
@@ -277,7 +272,7 @@ void GameScene::callRandomGift(float dt)
 	// Create a function call action to execute your gift appearance logic
 	auto callFunc = cocos2d::CallFunc::create([this]() {
 		Gift* gift = Gift::create();// Replace spawnGift with your actual method to create and show the gift
-		gift->setScale(0.4);
+		gift->setScale(0.25);
 		this->addChild(gift,2);
 		});
 
