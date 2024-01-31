@@ -46,8 +46,9 @@ bool Ship::init(EntityInfo* info)
 void Ship::takeDamage(int dame)
 {
 	log("take dame: %d", dame);
+	float maxhealth = _healthCtrl->getMaxHealth();
 	float newhealth = _healthCtrl->getCurrentHealth() - dame;
-	if (newhealth < _healthCtrl->getMaxHealth()) {
+	if (newhealth <= maxhealth) {
 		_healthCtrl->setCurrentHealth(_healthCtrl->getCurrentHealth() - dame);
 	}
 }
