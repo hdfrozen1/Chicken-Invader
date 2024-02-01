@@ -65,7 +65,7 @@ bool Gift::callbackOnContactBegin(PhysicsContact& contact)
 		else if (random_number == 3) {
 			theship->takeDamage(-10);
 		}
-		else {
+		else if(random_number == 2) {
 			Observer::getInstance()->notify("AddBullet", this);
 		}
 	}
