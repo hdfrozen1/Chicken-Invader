@@ -11,6 +11,8 @@ USING_NS_CC;
 
 class GameScene :public Scene {
 private:
+	Vec2 newPosition;
+	Size visibleSize;
 	MenuItemImage* _pause;
 	Sprite* _live;
 	std::vector<int> enemy_quantity;
@@ -32,6 +34,7 @@ private:
 	std::vector<Vec2> bulletbegin = { Vec2(0,0), Vec2(15,-4), Vec2(-15,-10) };
 	int defaultbullet = 1;
 	float delta_time = 0;
+	float halfShipWidth, halfShipHeight;
 public:
 	void callEnemy(float dt);
 	static Scene* create(std::string level, int BossLevel);

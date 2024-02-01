@@ -10,7 +10,7 @@
 
 void GameScene::callEnemy(float dt)
 {
-	log("child:%d", this->getChildren().size());
+	//log("child:%d", this->getChildren().size());
 	//log("soluong:%d", soluong);
 	//log("element:%d", _element);
 	if (soluong <= 0 ) {
@@ -107,7 +107,7 @@ bool GameScene::init(std::string level, int BossLevel)
 		return false;
 	}
 	//this->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
-
+	visibleSize = Director::getInstance()->getVisibleSize();
 	Node* frame = Node::create();
 	auto frameBody = PhysicsBody::createEdgeBox(Director::getInstance()->getVisibleSize());
 	frame->setPhysicsBody(frameBody);
@@ -190,7 +190,20 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 
 void GameScene::onTouchMoved(Touch* touch, Event* event)
 {
-	_ship->setPosition(touch->getLocation() + delta);
+	newPosition = touch->getLocation() + delta;
+	
+
+	// Assuming _ship is the sprite representing your ship
+	halfShipWidth = _ship->getModel()->getContentSize().width / 2;
+	halfShipHeight = _ship->getModel()->getContentSize().height / 2;
+
+	newPosition.x = clampf(newPosition.x, halfShipWidth, visibleSize.width - halfShipWidth);
+	newPosition.y = clampf(newPosition.y, halfShipHeight, visibleSize.height - halfShipHeight);
+
+	log("new x : %f", newPosition.x);
+	log("new y : %f", newPosition.y);
+
+	_ship->setPosition(newPosition);
 	return;
 }
 
