@@ -56,7 +56,7 @@ void Ship::takeDamage(int dame)
 
 void Ship::onDie()
 {
-	log("die");
+	//log("die");
 	// add effects....
 	this->removeFromParentAndCleanup(true);
 }

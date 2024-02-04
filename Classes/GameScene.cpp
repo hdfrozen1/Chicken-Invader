@@ -10,9 +10,8 @@
 
 void GameScene::callEnemy(float dt)
 {
-	//log("child:%d", this->getChildren().size());
-	//log("soluong:%d", soluong);
-	//log("element:%d", _element);
+	second += dt;
+	
 	if (soluong <= 0 ) {
 		
 		if (enemy_quantity[_element] == 1) {
@@ -45,39 +44,41 @@ void GameScene::callEnemy(float dt)
 			this->addChild(enemy, 2);
 		}
 		else {
-			soluong = enemy_quantity[_element] * 2;
-			float x_pos = 0;
-			float y_pos = _dest_y[_element];
-			float y2_pos = _dest_y2[_element];
-			for (int i = 0; i < enemy_quantity[_element]; i++) {
-				Enemy* enemy1 = Enemy::create(new EntityInfo(_element + 1, _difficulty));
-				Enemy* enemy2 = Enemy::create(new EntityInfo(_element + 1, _difficulty));
-				Vec2 leftside = Vec2(random(-100, -50), random(600, 900));
-				Vec2 rightside = Vec2(random(450, 500), random(600, 900));
-				enemy1->setPosition(leftside);
-				enemy2->setPosition(rightside);
-				enemy1->setRotation(180);
-				enemy2->setRotation(180);
-				x_pos +=  _distance_x[_element];
-				y_pos +=  _distance_y[_element];
-				y2_pos -=  _distance_y[_element];
+			if (second < 19) {
+				soluong = enemy_quantity[_element] * 2;
+				float x_pos = 0;
+				float y_pos = _dest_y[_element];
+				float y2_pos = _dest_y2[_element];
+				for (int i = 0; i < enemy_quantity[_element]; i++) {
+					Enemy* enemy1 = Enemy::create(new EntityInfo(_element + 1, _difficulty));
+					Enemy* enemy2 = Enemy::create(new EntityInfo(_element + 1, _difficulty));
+					Vec2 leftside = Vec2(random(-100, -50), random(600, 900));
+					Vec2 rightside = Vec2(random(450, 500), random(600, 900));
+					enemy1->setPosition(leftside);
+					enemy2->setPosition(rightside);
+					enemy1->setRotation(180);
+					enemy2->setRotation(180);
+					x_pos += _distance_x[_element];
+					y_pos += _distance_y[_element];
+					y2_pos -= _distance_y[_element];
 
-				MoveTo* moveto1 = MoveTo::create(1, Vec2(x_pos, y_pos));
-				MoveTo* moveto2 = MoveTo::create(1, Vec2(x_pos, y2_pos));
-				enemy1->runAction(moveto1);
-				enemy2->runAction(moveto2);
+					MoveTo* moveto1 = MoveTo::create(1, Vec2(x_pos, y_pos));
+					MoveTo* moveto2 = MoveTo::create(1, Vec2(x_pos, y2_pos));
+					enemy1->runAction(moveto1);
+					enemy2->runAction(moveto2);
 
-				enemy1->takePosition(Vec2(x_pos, y_pos));
-				enemy2->takePosition(Vec2(x_pos, y2_pos));
+					enemy1->takePosition(Vec2(x_pos, y_pos));
+					enemy2->takePosition(Vec2(x_pos, y2_pos));
 
-				/*_enemyPosition.push_back(Vec2(x_pos, y_pos));
-				_enemyPosition.push_back(Vec2(x_pos, y2_pos));*/
-				
-				_enemies.push_back(enemy1);
-				_enemies.push_back(enemy2);
-				
-				this->addChild(enemy1,2);
-				this->addChild(enemy2,2);
+					/*_enemyPosition.push_back(Vec2(x_pos, y_pos));
+					_enemyPosition.push_back(Vec2(x_pos, y2_pos));*/
+
+					_enemies.push_back(enemy1);
+					_enemies.push_back(enemy2);
+
+					this->addChild(enemy1, 2);
+					this->addChild(enemy2, 2);
+				}
 			}
 		}
 	}
@@ -106,6 +107,7 @@ bool GameScene::init(std::string level, int BossLevel)
 	if (!Scene::initWithPhysics()) {
 		return false;
 	}
+	boss_level = BossLevel;
 	//this->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 	visibleSize = Director::getInstance()->getVisibleSize();
 	Node* frame = Node::create();
@@ -164,7 +166,7 @@ bool GameScene::init(std::string level, int BossLevel)
 
 void GameScene::updateEnemy(float dt)
 {
-	
+	second = 0;
 	Vector<Node*> children = this->getChildren();
 	for (auto child : children) {
 		if (dynamic_cast<Enemy*>(child) && enemy_quantity[_element] > 1) {
@@ -199,9 +201,6 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 
 	newPosition.x = clampf(newPosition.x, halfShipWidth, visibleSize.width - halfShipWidth);
 	newPosition.y = clampf(newPosition.y, halfShipHeight, visibleSize.height - halfShipHeight);
-
-	log("new x : %f", newPosition.x);
-	log("new y : %f", newPosition.y);
 
 	_ship->setPosition(newPosition);
 	return;
@@ -294,4 +293,12 @@ void GameScene::callRandomGift(float dt)
 
 	// Run the sequence on the current node or on the desired target
 	this->runAction(sequence);
+}
+
+void GameScene::callBoss()
+{
+	_boss = Boss::create(new EntityInfo(boss_level, "Boss"));
+	MoveTo* bossto = MoveTo::create(2, Vec2(visibleSize.width / 2, 700));
+	_boss->setScale(3.0f);
+	this->addChild(_boss, 2);
 }

@@ -35,6 +35,8 @@ private:
 	int defaultbullet = 1;
 	float delta_time = 0;
 	float halfShipWidth, halfShipHeight;
+	int boss_level;
+	float second = 0;
 public:
 	void callEnemy(float dt);
 	static Scene* create(std::string level, int BossLevel);
@@ -49,6 +51,7 @@ private:
 	void EnemyAttack(float dt);
 	void addBullet();
 	void callRandomGift(float dt);
+	void callBoss();
 };
 
 #endif // !__GAME_SCENE_H__

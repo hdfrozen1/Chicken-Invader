@@ -31,7 +31,7 @@ bool EBullet::init(std::string level)
 	body->setCollisionBitmask(DefineBitmask::NON);
 
 	this->setPhysicsBody(body);
-	body->setVelocity(Vec2(0, -400));
+	body->setVelocity(Vec2(0, -700));
 
 	auto listener = EventListenerPhysicsContact::create();
 	listener->onContactBegin = CC_CALLBACK_1(EBullet::callbackOnContactBegin, this);

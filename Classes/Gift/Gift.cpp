@@ -50,7 +50,6 @@ bool Gift::init()
 
 bool Gift::callbackOnContactBegin(PhysicsContact& contact)
 {
-	log("bitmaks:%d", this->getPhysicsBody()->getContactTestBitmask());
 	auto nodeA = contact.getShapeA()->getBody()->getNode();
 	auto nodeB = contact.getShapeB()->getBody()->getNode();
 	if (nodeA != this && nodeB != this) return false;
