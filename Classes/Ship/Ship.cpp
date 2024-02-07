@@ -47,15 +47,27 @@ bool Ship::init(EntityInfo* info)
 void Ship::takeDamage(int dame)
 {
 	log("take dame: %d", dame);
-	
+
 	float maxhealth = _healthCtrl->getMaxHealth();
 	float newhealth = _healthCtrl->getCurrentHealth() - dame;
 	if (newhealth <= maxhealth) {
 		_healthCtrl->setCurrentHealth(_healthCtrl->getCurrentHealth() - dame);
 		_dame = dame;
 		Observer::getInstance()->notify("ShipTakeDame", this);
+
+		if (_dame > 0) {
+			this->getPhysicsBody()->setEnabled(false);
+			this->getModel()->setOpacity(50);
+			// Schedule a callback to turn on physics body after 2 seconds
+			this->scheduleOnce([this](float dt) {
+				// Turn on physics body after the delay
+				this->getPhysicsBody()->setEnabled(true);
+				this->getModel()->setOpacity(255);
+				}, 2.0f, "turnOnPhysicsBody");
+		}
 	}
 }
+
 
 
 void Ship::onDie()
