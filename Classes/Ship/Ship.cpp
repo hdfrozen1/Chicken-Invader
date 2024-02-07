@@ -1,6 +1,7 @@
 #include "Ship.h"
 #include "Utilities/AnimationUtils.h"
 #include "DefineBitmask.h"
+#include "DesignPattern/Observer.h"
 
 Ship* Ship::create(EntityInfo* info)
 {
@@ -46,10 +47,13 @@ bool Ship::init(EntityInfo* info)
 void Ship::takeDamage(int dame)
 {
 	log("take dame: %d", dame);
+	
 	float maxhealth = _healthCtrl->getMaxHealth();
 	float newhealth = _healthCtrl->getCurrentHealth() - dame;
 	if (newhealth <= maxhealth) {
 		_healthCtrl->setCurrentHealth(_healthCtrl->getCurrentHealth() - dame);
+		_dame = dame;
+		Observer::getInstance()->notify("ShipTakeDame", this);
 	}
 }
 

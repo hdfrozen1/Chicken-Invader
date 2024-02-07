@@ -64,9 +64,28 @@ void Enemy::takePosition(Vec2 pos)
 
 void Enemy::onDie()
 {
-	//log("die");
+
 	// add effects....
-	//_parentScene->addScore();
+	AnimationUtils::loadSpriteFrameCache("Explosion/", "EnemyExplosion");
+	AnimationUtils::createAnimation("EnemyExplosion", 0.1f);
+
+	auto explosion = Sprite::createWithSpriteFrameName("EnemyExplosion (1)");
+
+	explosion->setPosition(this->getPosition());
+	explosion->setScale(0.2);
+
+	this->getParent()->addChild(explosion, this->getLocalZOrder());
+
+	// Run the explosion animation
+	auto animation = AnimationCache::getInstance()->getAnimation("EnemyExplosion");
+	auto animate = Animate::create(animation);
+	auto removeExplosion = CallFunc::create([explosion]() {
+		explosion->removeFromParentAndCleanup(true);
+		});
+
+	auto sequence = Sequence::create(animate, removeExplosion, nullptr);
+	explosion->runAction(sequence);
+
 	Observer::getInstance()->notify("EnemyDie", this);
 
 	this->removeFromParentAndCleanup(true);

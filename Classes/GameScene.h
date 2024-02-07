@@ -37,6 +37,8 @@ private:
 	float halfShipWidth, halfShipHeight;
 	int boss_level;
 	float second = 0;
+	Label* _mang;
+	int _shiplife;
 public:
 	void callEnemy(float dt);
 	static Scene* create(std::string level, int BossLevel);
@@ -52,6 +54,7 @@ private:
 	void addBullet();
 	void callRandomGift(float dt);
 	void callBoss();
+	void changeLife(void* data);
 };
 
 #endif // !__GAME_SCENE_H__

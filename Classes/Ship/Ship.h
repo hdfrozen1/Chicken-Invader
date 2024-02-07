@@ -10,12 +10,12 @@ class Ship : public Entity, public IDamageable
 public:
 	static Ship* create(EntityInfo* info);
 	virtual bool init(EntityInfo* info) override;
-
+	int getdame() { return _dame; }
 	void takeDamage(int dame) override;
 protected:
 
 	HealthController* _healthCtrl;
-
+	int _dame;
 	void onDie();
 
 	void onEnter() override;

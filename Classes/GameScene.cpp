@@ -137,18 +137,25 @@ bool GameScene::init(std::string level, int BossLevel)
 	}
 	soluong = 0;
 
+	
 
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	this->_difficulty = "Enemy" + level;
 
 	_ship = Ship::create(new EntityInfo(1, "Ship"));
 	_ship->setPosition(Vec2(visibleSize.width / 2, 100));
-
+	
 	this->addChild(_ship,2);
+
+	_shiplife = (_ship->getEntityStat()->_hp) / 10;
+	_mang = Label::createWithTTF("life:" + std::to_string(_shiplife), "fonts/Marker Felt.ttf", 24);
+	_mang->setPosition(Vec2(50, 50));
+	_mang->setOpacity(100);
+	this->addChild(_mang, 2);
 	
 	Observer::getInstance()->registerEvent("EnemyDie", CC_CALLBACK_1(GameScene::updatequantity, this));
 	Observer::getInstance()->registerEvent("AddBullet", CC_CALLBACK_0(GameScene::addBullet, this));
-	
+	Observer::getInstance()->registerEvent("ShipTakeDame", CC_CALLBACK_1(GameScene::changeLife, this));
 
 
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callEnemy), 1.0f);
@@ -176,12 +183,15 @@ void GameScene::updateEnemy(float dt)
 	_element += 1;
 	soluong = 0;
 	_enemies.clear();
+	
+
 }
 
 bool GameScene::onTouchBegan(Touch* touch, Event* event)
 {
 	if (!ispressed) {
 		ispressed = true;
+		attack(20);
 		delta = _ship->getPosition() - touch->getLocation();
 		schedule(CC_SCHEDULE_SELECTOR(GameScene::attack), 0.2);
 		return true;
@@ -301,4 +311,11 @@ void GameScene::callBoss()
 	MoveTo* bossto = MoveTo::create(2, Vec2(visibleSize.width / 2, 700));
 	_boss->setScale(3.0f);
 	this->addChild(_boss, 2);
+}
+
+void GameScene::changeLife(void* data)
+{
+	_shiplife -= (static_cast<Ship*>(data)->getdame()) / 10;
+	_mang->setString("life:" + std::to_string(_shiplife));
+
 }
