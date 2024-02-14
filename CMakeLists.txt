@@ -25,7 +25,7 @@
 
 cmake_minimum_required(VERSION 3.6)
 
-set(APP_NAME FirstProj)
+set(APP_NAME Project2)
 
 project(${APP_NAME})
 
