@@ -376,8 +376,8 @@ void GameScene::callBoss()
 	_thongbao->runAction(Sequence::create(fadeOutAction, callFunc, nullptr));
 
 	_boss = Boss::create(new EntityInfo(boss_level, "Boss"));
-	MoveTo* bossto = MoveTo::create(2.0f, Vec2(visibleSize.width / 2, 700));
-	_boss->setPosition(Vec2(150, 444));
+	MoveTo* bossto = MoveTo::create(4.0f, Vec2(visibleSize.width / 2, 100));
+	_boss->setPosition(Vec2(150, 1000));
 	_boss->setScale(3.0f);
 	this->addChild(_boss, 2);
 
