@@ -143,7 +143,7 @@ bool GameScene::init(std::string level, int BossLevel)
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	this->_difficulty = "Enemy" + level;
 
-	_ship = Ship::create(new EntityInfo(2, "Ship"));
+	_ship = Ship::create(new EntityInfo(1, "Ship"));
 	_ship->setPosition(Vec2(visibleSize.width / 2, 100));
 	
 	this->addChild(_ship,2);

@@ -32,7 +32,7 @@ private:
 	Vec2 delta;
 	std::map<Vec2, Vec2> Ebulletpos;
 	std::vector<Vec2> bulletbegin = { Vec2(0,0), Vec2(15,-2), Vec2(-15,-4) };
-	int defaultbullet = 3;
+	int defaultbullet = 1;
 	float delta_time = 0;
 	float halfShipWidth, halfShipHeight;
 	int boss_level;
