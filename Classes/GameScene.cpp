@@ -186,10 +186,11 @@ bool GameScene::init(std::string level, int BossLevel)
 		this->unschedule(CC_SCHEDULE_SELECTOR(GameScene::callEnemy));
 		this->unschedule(CC_SCHEDULE_SELECTOR(GameScene::EnemyAttack));
 		callBoss();
-		this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callrandomAttack), 5.0f);
+		
 		// Schedule another callback to unschedule updateEnemy after 2 seconds
 		this->scheduleOnce([this](float dt) {
 			this->unschedule(CC_SCHEDULE_SELECTOR(GameScene::updateEnemy));
+			this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callrandomAttack), 5.0f);
 			}, 2.0f, "unscheduleUpdateEnemy");
 		}, 119.0f, "callBoss");
 
