@@ -31,14 +31,17 @@ private:
 	bool ispressed = false;
 	Vec2 delta;
 	std::map<Vec2, Vec2> Ebulletpos;
-	std::vector<Vec2> bulletbegin = { Vec2(0,0), Vec2(15,-4), Vec2(-15,-10) };
-	int defaultbullet = 1;
+	std::vector<Vec2> bulletbegin = { Vec2(0,0), Vec2(15,-2), Vec2(-15,-4) };
+	int defaultbullet = 3;
 	float delta_time = 0;
 	float halfShipWidth, halfShipHeight;
 	int boss_level;
 	float second = 0;
-	Label* _mang;
+	Label* _mang, * _thongbao;
 	int _shiplife;
+	std::vector<Vec2> firstbosspos = { Vec2(28,-48),Vec2(50, -43),Vec2(25, -99) };
+	std::vector<Vec2> secondbosspos = { Vec2(-28,-48),Vec2(-50, -43),Vec2(-25, -99) };
+	std::vector<float> scales = { 0.45f,0.3f,0.6f };
 public:
 	void callEnemy(float dt);
 	static Scene* create(std::string level, int BossLevel);
@@ -55,6 +58,9 @@ private:
 	void callRandomGift(float dt);
 	void callBoss();
 	void changeLife(void* data);
+	void rocketAttack();
+	void bulletAttack();
+	void callrandomAttack(float dt);
 };
 
 #endif // !__GAME_SCENE_H__

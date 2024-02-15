@@ -7,6 +7,7 @@
 #include "Enemy_Bullet/EBullet.h"
 #include <algorithm>
 #include "Gift/Gift.h"
+#include "BossRocket/BossRocket.h"
 
 void GameScene::callEnemy(float dt)
 {
@@ -142,7 +143,7 @@ bool GameScene::init(std::string level, int BossLevel)
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	this->_difficulty = "Enemy" + level;
 
-	_ship = Ship::create(new EntityInfo(1, "Ship"));
+	_ship = Ship::create(new EntityInfo(2, "Ship"));
 	_ship->setPosition(Vec2(visibleSize.width / 2, 100));
 	
 	this->addChild(_ship,2);
@@ -152,7 +153,23 @@ bool GameScene::init(std::string level, int BossLevel)
 	_mang->setPosition(Vec2(50, 50));
 	_mang->setOpacity(100);
 	this->addChild(_mang, 2);
-	
+
+	_thongbao = Label::createWithTTF("Wave :"+std::to_string(_element + 1) + "/6", "fonts/Marker Felt.ttf", 24);
+	_thongbao->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	this->addChild(_thongbao, 2);
+	_thongbao->setOpacity(100);
+	auto fadeOutAction = FadeTo::create(2.0f, 0);  // 2.0f is the duration in seconds, you can adjust it
+
+	// Create a CallFunc to perform an action after the fade-out is complete
+	auto callFunc = CallFunc::create([this]() {
+		// Action completed, you can add more code here if needed
+		// For example, you might want to remove the label from the scene
+		this->removeChild(_thongbao);
+		});
+
+	// Run the sequence of actions
+	_thongbao->runAction(Sequence::create(fadeOutAction, callFunc, nullptr));
+
 	Observer::getInstance()->registerEvent("EnemyDie", CC_CALLBACK_1(GameScene::updatequantity, this));
 	Observer::getInstance()->registerEvent("AddBullet", CC_CALLBACK_0(GameScene::addBullet, this));
 	Observer::getInstance()->registerEvent("ShipTakeDame", CC_CALLBACK_1(GameScene::changeLife, this));
@@ -161,8 +178,21 @@ bool GameScene::init(std::string level, int BossLevel)
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callEnemy), 1.0f);
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::EnemyAttack), 3.0f);
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::updateEnemy), 20.0f);
-	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callRandomGift), 15.0f);
+	//this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callRandomGift), 15.0f);
 	
+	this->scheduleOnce([this](float dt) {
+		// Update the ContactTestBitmask to include DefineBitmask::FRAME
+		
+		this->unschedule(CC_SCHEDULE_SELECTOR(GameScene::callEnemy));
+		this->unschedule(CC_SCHEDULE_SELECTOR(GameScene::EnemyAttack));
+		callBoss();
+		this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callrandomAttack), 5.0f);
+		// Schedule another callback to unschedule updateEnemy after 2 seconds
+		this->scheduleOnce([this](float dt) {
+			this->unschedule(CC_SCHEDULE_SELECTOR(GameScene::updateEnemy));
+			}, 2.0f, "unscheduleUpdateEnemy");
+		}, 119.0f, "callBoss");
+
 	auto listener = EventListenerTouchOneByOne::create();
 	listener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
 	listener->onTouchMoved = CC_CALLBACK_2(GameScene::onTouchMoved, this);
@@ -183,6 +213,24 @@ void GameScene::updateEnemy(float dt)
 	_element += 1;
 	soluong = 0;
 	_enemies.clear();
+
+	if (_element < 7) {
+		_thongbao = Label::createWithTTF("Wave :" + std::to_string(_element + 1) + "/6", "fonts/Marker Felt.ttf", 24);
+		_thongbao->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+		this->addChild(_thongbao, 2);
+		_thongbao->setOpacity(100);
+		auto fadeOutAction = FadeTo::create(2.0f, 0);  // 2.0f is the duration in seconds, you can adjust it
+
+		// Create a CallFunc to perform an action after the fade-out is complete
+		auto callFunc = CallFunc::create([this]() {
+			// Action completed, you can add more code here if needed
+			// For example, you might want to remove the label from the scene
+			this->removeChild(_thongbao);
+			});
+
+		// Run the sequence of actions
+		_thongbao->runAction(Sequence::create(fadeOutAction, callFunc, nullptr));
+	}
 	
 
 }
@@ -257,7 +305,11 @@ void GameScene::EnemyAttack(float dt)
 	if (enemy_quantity[_element] > 1) {
 		int firedquantity = random(1, 3);
 		for (int i = 0; i < firedquantity; i++) {
-			int a = random(0, int(_enemies.size()) - 1);
+			int max = int(_enemies.size()) - 1;
+			if (max < 0) {
+				return;
+			}
+			int a = random(0, max);
 			Vec2 _realPos = _enemies[a]->getPosition();
 			Vec2 _convetpos = Vec2((round(_realPos.x * 100)) / 100, (round(_realPos.y * 100)) / 100);
 			Vec2 _EPos = _enemies[a]->getEnemyPostition();
@@ -307,10 +359,34 @@ void GameScene::callRandomGift(float dt)
 
 void GameScene::callBoss()
 {
+	_thongbao = Label::createWithTTF("Boss ", "fonts/Marker Felt.ttf", 24);
+	_thongbao->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2));
+	this->addChild(_thongbao, 2);
+	_thongbao->setOpacity(100);
+	auto fadeOutAction = FadeTo::create(2.0f, 0);  // 2.0f is the duration in seconds, you can adjust it
+
+	// Create a CallFunc to perform an action after the fade-out is complete
+	auto callFunc = CallFunc::create([this]() {
+		// Action completed, you can add more code here if needed
+		// For example, you might want to remove the label from the scene
+		this->removeChild(_thongbao);
+		});
+
+	// Run the sequence of actions
+	_thongbao->runAction(Sequence::create(fadeOutAction, callFunc, nullptr));
+
 	_boss = Boss::create(new EntityInfo(boss_level, "Boss"));
-	MoveTo* bossto = MoveTo::create(2, Vec2(visibleSize.width / 2, 700));
+	MoveTo* bossto = MoveTo::create(2.0f, Vec2(visibleSize.width / 2, 700));
+	_boss->setPosition(Vec2(150, 444));
 	_boss->setScale(3.0f);
 	this->addChild(_boss, 2);
+
+	MoveTo* moveby1 = MoveTo::create(2.5f, Vec2(300, 700));
+	MoveTo* moveby2 = MoveTo::create(2.5f, Vec2(100, 700));
+
+	auto sequence = Sequence::create(moveby1, moveby2, nullptr);
+	auto repeatForever = RepeatForever::create(sequence);
+	_boss->runAction(repeatForever);
 }
 
 void GameScene::changeLife(void* data)
@@ -318,4 +394,36 @@ void GameScene::changeLife(void* data)
 	_shiplife -= (static_cast<Ship*>(data)->getdame()) / 10;
 	_mang->setString("life:" + std::to_string(_shiplife));
 
+}
+
+void GameScene::rocketAttack()
+{
+	Vec2 bosspos = _boss->getPosition();
+	Rocket* rocket = Rocket::create(std::to_string(boss_level));
+	rocket->setPosition(bosspos);
+}
+
+void GameScene::bulletAttack()
+{
+	Vec2 bosspos = _boss->getPosition();
+	EBullet* bossbullet1 = EBullet::create(std::to_string(boss_level));
+	bossbullet1->setScale(scales[boss_level-1]);
+	bossbullet1->setPosition(bosspos + firstbosspos[boss_level - 1]);
+	this->addChild(bossbullet1);
+
+	EBullet* bossbullet2 = EBullet::create(std::to_string(boss_level));
+	bossbullet2->setScale(scales[boss_level - 1]);
+	bossbullet2->setPosition(bosspos + secondbosspos[boss_level - 1]);
+	this->addChild(bossbullet2);
+}
+
+void GameScene::callrandomAttack(float dt)
+{
+	int a = random(1, 2);
+	if (a == 1) {
+		bulletAttack();
+	}
+	else {
+		rocketAttack();
+	}
 }

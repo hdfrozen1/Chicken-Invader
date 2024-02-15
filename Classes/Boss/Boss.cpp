@@ -66,7 +66,7 @@ void Boss::onEnter()
 	_healthCtrl = HealthController::create(_entityStat->_hp, "fill.png");
 	_healthCtrl->setOnDie(CC_CALLBACK_0(Boss::onDie, this));
 	_healthCtrl->setPosition(Vec2(-(_healthCtrl->getContentSize().width / 2)
-		, _model->getContentSize().height - 15));
+		, _model->getContentSize().height - 20));
 	this->addChild(_healthCtrl);
 }
 

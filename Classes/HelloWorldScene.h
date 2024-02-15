@@ -36,6 +36,9 @@ public:
     // a selector callback
     void menuCloseCallback(cocos2d::Ref* pSender);
     
+    void callHello();
+    void deltatime(float dt);
+    std::vector<int> numbers = { 1,2,3,4,5 };
 
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);

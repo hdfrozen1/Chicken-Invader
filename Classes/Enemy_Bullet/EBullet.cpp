@@ -25,7 +25,7 @@ bool EBullet::init(std::string level)
 	_model = Sprite::create("Enemy_Bullet/" + level + "_Bullet.png");
 	this->addChild(_model);
 
-	auto body = PhysicsBody::createEdgeBox(_model->getContentSize(), PhysicsMaterial(1, 0, 1), 1.0f);
+	PhysicsBody* body = PhysicsBody::createCircle(_model->getContentSize().width / 2, PhysicsMaterial(1, 0, 1));
 	body->setCategoryBitmask(DefineBitmask::EBULLET);
 	body->setContactTestBitmask(DefineBitmask::SHIP|DefineBitmask::FRAME);
 	body->setCollisionBitmask(DefineBitmask::NON);

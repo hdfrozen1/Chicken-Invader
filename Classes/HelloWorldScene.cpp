@@ -27,6 +27,8 @@
 #include "Boss/Boss.h"
 #include "Enemy/Enemy.h"
 #include "Ship/Ship.h"
+#include "BossRocket/BossRocket.h"
+#include "Enemy_Bullet/EBullet.h"
 USING_NS_CC;
 
 Scene* HelloWorld::createScene()
@@ -50,7 +52,7 @@ bool HelloWorld::init()
     {
         return false;
     }
-    this->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
+    //this->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
     auto visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
@@ -104,7 +106,7 @@ bool HelloWorld::init()
     }
 
     // add "HelloWorld" splash screen"
-    AnimationUtils::loadSpriteFrameCache("Boss/", "Boss3");
+    /*AnimationUtils::loadSpriteFrameCache("Boss/", "Boss3");
     auto sprite = Sprite::createWithSpriteFrameName("Boss3 (1)");
     sprite->setScale(1.5);
     Animate* animate = Animate::create(AnimationUtils::createAnimation("Boss3",10 , 0.1f));
@@ -114,7 +116,58 @@ bool HelloWorld::init()
     auto enemyBullet = Sprite::create("Enemy_Bullet/EnemyEasy_Bullet.png");
     enemyBullet->setPosition(Vec2(150, 500));
     enemyBullet->setScale(0.3);
-    this->addChild(enemyBullet);
+    this->addChild(enemyBullet);*/
+
+    Boss* boss = Boss::create(new EntityInfo(1, "Boss"));
+    boss->setPosition(Vec2(393 / 2, 700 ));
+    boss->setScale(3);
+    this->addChild(boss);
+
+    auto bosspos = boss->getPosition();
+
+    auto dan1 = Sprite::create("Enemy_Bullet/1_Bullet.png");
+    auto dan2 = Sprite::create("Enemy_Bullet/1_Bullet.png");
+    
+    dan1->setScale(0.45);
+    dan2->setScale(0.45);
+
+    dan1->setPosition(bosspos + Vec2(28, -48));
+    dan2->setPosition(bosspos + Vec2(-28, -48));
+    this->addChild(dan1);
+    this->addChild(dan2);
+
+    this->schedule(CC_SCHEDULE_SELECTOR(HelloWorld::deltatime), 5.0f);
+
+    this->scheduleOnce([this](float dt) {
+        // Update the ContactTestBitmask to include DefineBitmask::FRAME
+        this->unschedule(CC_SCHEDULE_SELECTOR(HelloWorld::deltatime));
+        }, 5.0f, "updateContactTestBitmask");
+    
+    int a = random(1, 0);
+    log("%d", a);
+    //AnimationUtils::loadSpriteFrameCache("Explosion/", "ExplosionBoss");
+    //AnimationUtils::createAnimation("ExplosionBoss", 3.0f);
+
+    //auto explosion = Sprite::createWithSpriteFrameName("ExplosionBoss (1)");
+
+    //explosion->setPosition(this->getPosition());
+    //explosion->setScale(0.2);
+    //// Run the explosion animation
+    //auto animation = AnimationCache::getInstance()->getAnimation("ExplosionBoss");
+    //auto animate = Animate::create(animation);
+    //auto zoomInAction = ScaleTo::create(5.0f, 5.0f); // Zoom in to 1.5 times the original size
+    //auto removeExplosion = CallFunc::create([explosion]() {
+    //    explosion->removeFromParentAndCleanup(true);
+    //    });
+    //auto sequence = Sequence::create(animate,zoomInAction, removeExplosion, nullptr);
+    //explosion->runAction(sequence);
+
+    //this->addChild(explosion, 2);
+    //explosion->setPosition(Vec2(150,300));
+
+    /*auto rocket = Rocket::create("1");
+    rocket->setPosition(Vec2(150, 600));
+    this->addChild(rocket);*/
 
     /*Enemy* ship = Enemy::create(new EntityInfo(6, "EnemyHard"));
     ship->setScale(1.3);
@@ -183,5 +236,16 @@ void HelloWorld::menuCloseCallback(Ref* pSender)
     //_eventDispatcher->dispatchEvent(&customEndEvent);
 
 
+}
+
+void HelloWorld::callHello()
+{
+    
+}
+
+void HelloWorld::deltatime(float dt)
+{
+    numbers.clear();
+    log("size : %d", int(numbers.size()));
 }
 

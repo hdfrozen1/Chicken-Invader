@@ -37,6 +37,7 @@ std::pair<Animation*, int> AnimationUtils::createAnimation(std::string name, flo
         }
         frames.pushBack(frame);
         ++numFrame;
+        
     }
 
     Animation* animation = Animation::createWithSpriteFrames(frames, duration / (float)numFrame);
