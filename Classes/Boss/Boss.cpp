@@ -1,6 +1,7 @@
 #include "Boss.h"
 #include "DefineBitmask.h"
 #include "Utilities/AnimationUtils.h"
+#include "DesignPattern/Observer.h"
 Boss* Boss::create(EntityInfo* info)
 {
 	auto newObject = new Boss();
@@ -55,6 +56,7 @@ void Boss::onDie()
 {
 	//log("die");
 	// add effects....
+	Observer::getInstance()->notify("BossDie", this);
 	this->removeFromParentAndCleanup(true);
 }
 

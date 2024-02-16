@@ -176,7 +176,7 @@ bool GameScene::init(std::string level, int BossLevel)
 	Observer::getInstance()->registerEvent("EnemyDie", CC_CALLBACK_1(GameScene::updatequantity, this));
 	Observer::getInstance()->registerEvent("AddBullet", CC_CALLBACK_0(GameScene::addBullet, this));
 	Observer::getInstance()->registerEvent("ShipTakeDame", CC_CALLBACK_1(GameScene::changeLife, this));
-
+	Observer::getInstance()->registerEvent("BossDie", CC_CALLBACK_1(GameScene::changeLife, this));
 
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callEnemy), 1.0f);
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::EnemyAttack), 3.0f);
@@ -451,4 +451,11 @@ void GameScene::callrandomAttack(float dt)
 	else {
 		rocketAttack();
 	}
+}
+
+void GameScene::callBossDie(void* data)
+{
+	int diem = static_cast<Boss*>(data)->getEntityStat()->_diem;
+	_totalscore += diem;
+	this->unschedule(CC_SCHEDULE_SELECTOR(GameScene::callrandomAttack));
 }

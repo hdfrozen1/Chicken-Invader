@@ -61,6 +61,7 @@ private:
 	void rocketAttack();
 	void bulletAttack();
 	void callrandomAttack(float dt);
+	void callBossDie(void* data);
 };
 
 #endif // !__GAME_SCENE_H__
