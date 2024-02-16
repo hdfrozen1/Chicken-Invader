@@ -444,6 +444,7 @@ void GameScene::bulletAttack()
 
 void GameScene::callrandomAttack(float dt)
 {
+	log("BOSS ATTACK");
 	int a = random(1, 2);
 	if (a == 1) {
 		bulletAttack();
