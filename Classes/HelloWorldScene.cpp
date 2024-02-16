@@ -143,7 +143,7 @@ bool HelloWorld::init()
         this->unschedule(CC_SCHEDULE_SELECTOR(HelloWorld::deltatime));
         }, 5.0f, "updateContactTestBitmask");
     
-    int a = random(1, 0);
+    int a = random(0, 0);
     log("%d", a);
     //AnimationUtils::loadSpriteFrameCache("Explosion/", "ExplosionBoss");
     //AnimationUtils::createAnimation("ExplosionBoss", 3.0f);

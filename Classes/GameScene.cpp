@@ -457,5 +457,7 @@ void GameScene::callBossDie(void* data)
 {
 	int diem = static_cast<Boss*>(data)->getEntityStat()->_diem;
 	_totalscore += diem;
+	this->unschedule("callBoss");
 	this->unschedule(CC_SCHEDULE_SELECTOR(GameScene::callrandomAttack));
+	this->unschedule("unscheduleUpdateEnemy");
 }

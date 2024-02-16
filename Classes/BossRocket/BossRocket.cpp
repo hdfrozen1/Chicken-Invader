@@ -28,7 +28,7 @@ bool Rocket::init(std::string level)
 	this->addChild(_model);
 	Animate* animate = Animate::create(AnimationUtils::createAnimation("Rocket" + level, 1.0f).first);
 	_model->runAction(RepeatForever::create(animate));
-	auto moveby = MoveBy::create(3, Vec2(0, random(-300,-500)));
+	auto moveby = MoveBy::create(3, Vec2(0, random(-500,-300)));
 
 	// Create a callback to handle the explosion after _model finishes moving
 	auto explosionCallback = CallFunc::create([this]() {
