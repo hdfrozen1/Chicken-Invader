@@ -8,6 +8,7 @@
 class Enemy : public Entity, public IDamageable
 {
 public:
+	
 	static Enemy* create(EntityInfo* info);
 	virtual bool init(EntityInfo* info) override;
 	void takeDamage(int dame) override;
@@ -23,6 +24,7 @@ protected:
 	bool callbackOnContactBegin(PhysicsContact& contact);
 private:
 	Vec2 GamePos = Vec2(0, 0);
+	static int loadAnimation;
 };
 
 #endif // !__ENEMY_H__

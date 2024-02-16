@@ -2,6 +2,7 @@
 #include "Utilities/AnimationUtils.h"
 #include "DefineBitmask.h"
 #include "DesignPattern/Observer.h"
+int Enemy::loadAnimation = 0;
 Enemy* Enemy::create(EntityInfo* info)
 {
 	auto newObject = new Enemy();
@@ -66,8 +67,11 @@ void Enemy::onDie()
 {
 
 	// add effects....
-	AnimationUtils::loadSpriteFrameCache("Explosion/", "NormalExplosion");
-	AnimationUtils::createAnimation("NormalExplosion", 0.1f);
+	if (loadAnimation == 0) {
+		AnimationUtils::loadSpriteFrameCache("Explosion/", "NormalExplosion");
+		AnimationUtils::createAnimation("NormalExplosion", 0.1f);
+		loadAnimation += 1;
+	}
 
 	auto explosion = Sprite::createWithSpriteFrameName("NormalExplosion (1)");
 
