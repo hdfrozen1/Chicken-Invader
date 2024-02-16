@@ -18,7 +18,7 @@ private:
 	Sprite* explosion;
 	int dame = 10;
 	static int loadAnimation;
-	static Animation* animation;
+	
 
 };
 

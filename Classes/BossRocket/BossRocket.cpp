@@ -2,6 +2,7 @@
 #include "IDamageable.h"
 #include "DefineBitmask.h"
 #include "Utilities/AnimationUtils.h"
+int Rocket::loadAnimation = 0;
 Rocket* Rocket::create(std::string level)
 {
 	auto newObject = new Rocket();
@@ -22,11 +23,20 @@ bool Rocket::init(std::string level)
 		log("init Bullet failed!");
 		return false;
 	}
+	if (loadAnimation == 0) {
+		AnimationUtils::loadSpriteFrameCache("BossRocket/", "Rocket" + level);
+		AnimationUtils::createAnimation("Rocket" + level, 1.0f);
 
-	AnimationUtils::loadSpriteFrameCache("BossRocket/", "Rocket" + level);
+		AnimationUtils::loadSpriteFrameCache("Explosion/", "ExplosionBoss");
+		AnimationUtils::createAnimation("ExplosionBoss", 1.0f);
+		loadAnimation += 1;
+	}
+
+	
 	_model = Sprite::createWithSpriteFrameName("Rocket" + level + " (1)");
 	this->addChild(_model);
-	Animate* animate = Animate::create(AnimationUtils::createAnimation("Rocket" + level, 1.0f).first);
+	auto animation = AnimationCache::getInstance()->getAnimation("Rocket"+level);
+	Animate* animate = Animate::create(animation);
 	_model->runAction(RepeatForever::create(animate));
 	auto moveby = MoveBy::create(3, Vec2(0, random(-500,-300)));
 
@@ -34,7 +44,7 @@ bool Rocket::init(std::string level)
 	auto explosionCallback = CallFunc::create([this]() {
 		// Load Explosion sprite frames
 		_model->removeFromParentAndCleanup(true);
-		AnimationUtils::loadSpriteFrameCache("Explosion/", "ExplosionBoss");
+		
 
 		// Create and add explosion sprite
 		explosion = Sprite::createWithSpriteFrameName("ExplosionBoss (1)");
@@ -45,9 +55,9 @@ bool Rocket::init(std::string level)
 		body->setCollisionBitmask(DefineBitmask::NON);
 		body->setDynamic(false);
 		this->setPhysicsBody(body);
-
+		auto animation2 = AnimationCache::getInstance()->getAnimation("ExplosionBoss");
 		// Create animation for explosion
-		Animate* animate2 = Animate::create(AnimationUtils::createAnimation("ExplosionBoss", 1).first);
+		Animate* animate2 = Animate::create(animation2);
 
 		// Run the explosion animation
 		explosion->runAction(Sequence::create(
