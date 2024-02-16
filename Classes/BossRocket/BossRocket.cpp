@@ -28,7 +28,7 @@ bool Rocket::init(std::string level)
 	this->addChild(_model);
 	Animate* animate = Animate::create(AnimationUtils::createAnimation("Rocket" + level, 1.0f).first);
 	_model->runAction(RepeatForever::create(animate));
-	auto moveby = MoveBy::create(3, Vec2(random(-100,100), -300));
+	auto moveby = MoveBy::create(3, Vec2(0, random(-300,-500)));
 
 	// Create a callback to handle the explosion after _model finishes moving
 	auto explosionCallback = CallFunc::create([this]() {
@@ -41,7 +41,7 @@ bool Rocket::init(std::string level)
 		this->addChild(explosion);
 		body = PhysicsBody::createCircle(explosion->getContentSize().width/2, PhysicsMaterial(1, 0, 1));
 		body->setCategoryBitmask(DefineBitmask::EBULLET);
-		body->setContactTestBitmask(DefineBitmask::SHIP | DefineBitmask::FRAME);
+		body->setContactTestBitmask(DefineBitmask::SHIP);
 		body->setCollisionBitmask(DefineBitmask::NON);
 		body->setDynamic(false);
 		this->setPhysicsBody(body);

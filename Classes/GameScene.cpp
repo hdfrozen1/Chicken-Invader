@@ -8,6 +8,7 @@
 #include <algorithm>
 #include "Gift/Gift.h"
 #include "BossRocket/BossRocket.h"
+#include "Utilities/AnimationUtils.h"
 
 void GameScene::callEnemy(float dt)
 {
@@ -108,6 +109,8 @@ bool GameScene::init(std::string level, int BossLevel)
 	if (!Scene::initWithPhysics()) {
 		return false;
 	}
+	AnimationUtils::loadSpriteFrameCache("Explosion/", "EnemyExplosion");
+	AnimationUtils::createAnimation("EnemyExplosion", 0.1f);
 	boss_level = BossLevel;
 	//this->getPhysicsWorld()->setDebugDrawMask(PhysicsWorld::DEBUGDRAW_ALL);
 	visibleSize = Director::getInstance()->getVisibleSize();
@@ -178,7 +181,7 @@ bool GameScene::init(std::string level, int BossLevel)
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callEnemy), 1.0f);
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::EnemyAttack), 3.0f);
 	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::updateEnemy), 20.0f);
-	//this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callRandomGift), 15.0f);
+	this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callRandomGift), 15.0f);
 	
 	this->scheduleOnce([this](float dt) {
 		// Update the ContactTestBitmask to include DefineBitmask::FRAME
@@ -191,7 +194,7 @@ bool GameScene::init(std::string level, int BossLevel)
 		this->scheduleOnce([this](float dt) {
 			this->unschedule(CC_SCHEDULE_SELECTOR(GameScene::updateEnemy));
 			this->schedule(CC_SCHEDULE_SELECTOR(GameScene::callrandomAttack), 5.0f);
-			}, 2.0f, "unscheduleUpdateEnemy");
+			}, 1.0f, "unscheduleUpdateEnemy");
 		}, 119.0f, "callBoss");
 
 	auto listener = EventListenerTouchOneByOne::create();
@@ -208,7 +211,27 @@ void GameScene::updateEnemy(float dt)
 	Vector<Node*> children = this->getChildren();
 	for (auto child : children) {
 		if (dynamic_cast<Enemy*>(child) && enemy_quantity[_element] > 1) {
+			Vec2 childpos = child->getPosition();
+			int a = child->getLocalZOrder();
 			child->removeFromParent();
+
+			auto explosion = Sprite::createWithSpriteFrameName("EnemyExplosion (1)");
+
+			explosion->setPosition(childpos);
+			explosion->setScale(0.2);
+
+			this->addChild(explosion, a);
+
+			// Run the explosion animation
+			auto animation = AnimationCache::getInstance()->getAnimation("EnemyExplosion");
+			auto animate = Animate::create(animation);
+			auto removeExplosion = CallFunc::create([explosion]() {
+				explosion->removeFromParentAndCleanup(true);
+				});
+
+			auto sequence = Sequence::create(animate, removeExplosion, nullptr);
+			explosion->runAction(sequence);
+			
 		}
 	}
 	_element += 1;
@@ -402,6 +425,7 @@ void GameScene::rocketAttack()
 	Vec2 bosspos = _boss->getPosition();
 	Rocket* rocket = Rocket::create(std::to_string(boss_level));
 	rocket->setPosition(bosspos);
+	this->addChild(rocket, 2);
 }
 
 void GameScene::bulletAttack()

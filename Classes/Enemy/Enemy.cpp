@@ -66,10 +66,10 @@ void Enemy::onDie()
 {
 
 	// add effects....
-	AnimationUtils::loadSpriteFrameCache("Explosion/", "EnemyExplosion");
-	AnimationUtils::createAnimation("EnemyExplosion", 0.1f);
+	AnimationUtils::loadSpriteFrameCache("Explosion/", "NormalExplosion");
+	AnimationUtils::createAnimation("NormalExplosion", 0.1f);
 
-	auto explosion = Sprite::createWithSpriteFrameName("EnemyExplosion (1)");
+	auto explosion = Sprite::createWithSpriteFrameName("NormalExplosion (1)");
 
 	explosion->setPosition(this->getPosition());
 	explosion->setScale(0.2);
@@ -77,7 +77,7 @@ void Enemy::onDie()
 	this->getParent()->addChild(explosion, this->getLocalZOrder());
 
 	// Run the explosion animation
-	auto animation = AnimationCache::getInstance()->getAnimation("EnemyExplosion");
+	auto animation = AnimationCache::getInstance()->getAnimation("NormalExplosion");
 	auto animate = Animate::create(animation);
 	auto removeExplosion = CallFunc::create([explosion]() {
 		explosion->removeFromParentAndCleanup(true);
